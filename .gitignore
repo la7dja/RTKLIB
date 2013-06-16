@@ -2,6 +2,11 @@
 *.obs
 *.ini
 *.local
+gcc/
+bin/
+*~
+\#*
+.#*
 Release
 Release_Build
 Debug_Build
