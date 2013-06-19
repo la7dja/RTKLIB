@@ -38,6 +38,7 @@
 *           2013/03/10 1.10 fix problem with ntrip mountpoint containing "/"
 *           2013/04/15 1.11 fix bug on swapping files if swapmargin=0
 *           2013/05/28 1.12 fix bug on playback of file with 64 bit size_t
+*           2013/06/19      add option for appending to output files 
 *-----------------------------------------------------------------------------*/
 #include <ctype.h>
 #include "rtklib.h"
@@ -453,8 +454,10 @@ static int openfile_(file_t *file, gtime_t time, char *msg)
     if ((file->mode&STR_MODE_W)&&!(file->mode&STR_MODE_R)) {
         createdir(file->openpath);
     }
-    if (file->mode&STR_MODE_R) rw="rb"; else rw="wb";
-    
+		if (file->mode&STR_MODE_R) rw="rb";
+    else if (file->mode&STR_MODE_A) rw="ab";
+    else rw="wb";
+
     if (!(file->fp=fopen(file->openpath,rw))) {
         sprintf(msg,"file open error: %s",file->openpath);
         tracet(1,"openfile: %s\n",msg);
@@ -531,9 +534,14 @@ static file_t *openfile(const char *path, int mode, char *msg)
     /* file options */
     for (p=(char *)path;(p=strstr(p,"::"));p+=2) { /* file options */
         if      (*(p+2)=='T') timetag=1;
-        else if (*(p+2)=='+') sscanf(p+2,"+%lf",&start);
         else if (*(p+2)=='x') sscanf(p+2,"x%lf",&speed);
         else if (*(p+2)=='S') sscanf(p+2,"S=%lf",&swapintv);
+        else if (*(p+2)=='+') {
+            if (mode==STR_MODE_R)
+                sscanf(p+2,"+%lf",&start);
+            else
+                mode|=STR_MODE_A;
+        }
     }
     if (start<=0.0) start=0.0;
     if (swapintv<=0.0) swapintv=0.0;

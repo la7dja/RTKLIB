@@ -386,6 +386,7 @@ extern "C" {
 #define STR_MODE_R  0x1                 /* stream mode: read */
 #define STR_MODE_W  0x2                 /* stream mode: write */
 #define STR_MODE_RW 0x3                 /* stream mode: read/write */
+#define STR_MODE_A  0x4                 /* stream mode: append */
 
 #define GEOID_EMBEDDED    0             /* geoid model: embedded geoid */
 #define GEOID_EGM96_M150  1             /* geoid model: EGM96 15x15" */
